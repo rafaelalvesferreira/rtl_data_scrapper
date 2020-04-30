@@ -2,11 +2,9 @@
 """
 Script para baixar os dados atualizados do Promax para o acompanhamento de
 volume
-
-
 """
-
 import time
+import datetime
 import os
 import random
 import logging
@@ -20,16 +18,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 
 logging.basicConfig(level=logging.INFO,
-                    filename='3-16-1.log',
+                    filename='3-16-2.log',
                     format='%(asctime)s; %(levelname)s; %(message)s')
 
 
-def relatorio(branch, branch_code):
+def Relatorio3_16_2(branch, branch_code, login, password):
     """
-    Função que automatiza a geração dos dados do relatório 3.16.1
+    Função que automatiza a geração dos dados do relatório 3.16.2
     variáveis de entrada:
     Branch - número do branch de 1 a 4
     Branch_code - código do branch no promax 132000, 61913, 85789, 63785
+    Login - Login do usuário no Promax
+    Password - Senha
 
     retorna o arquivo csv baixado na pasta final_donwnload_path
     """
@@ -37,23 +37,34 @@ def relatorio(branch, branch_code):
     logging.info('Inicio da rotina da filial %s', branch_code)
     random.seed()
 
-    driver_path = r'J:\5.0 Vendas\5.0 APR\Pasta Pessoal\Rafael\Scripts Python\automatizarbasedados\chromedriver.exe'
+    driver_path = 'chromedriver.exe'
 
-    profile_path = \
-        r'C:\Users\rafael.ferreira\AppData\Local\Google\Chrome SxS\User Data'
+    profile_path = os.path.join('C:\\Users',
+                                os.getlogin(),
+                                'AppData\\Local\\Google\\Chrome SxS',
+                                'User Data\\Profile 1')
 
-    login = 'RAFAELFERRE'
-    password = ''
-    final_data_path = r'C:\Users\rafael.ferreira\Downloads'
+    day = str(datetime.datetime.now().date())
+
+    final_data_path = os.path.join('C:\\Users',
+                                   os.getlogin(),
+                                   'Downloads',
+                                   day)
 
     # criar uma pasta para o download com nome aleatório
     random_folder = str(random.randint(0, 1000))
     download_path = os.path.join(final_data_path, random_folder)
     os.makedirs(download_path)
+    print(download_path)
 
     logging.info(download_path)
-    # branch_code = branch_code_number
-    # branch = branch_number
+
+    driver_path = 'chromedriver.exe'
+
+    profile_path = os.path.join('C:\\Users',
+                                os.getlogin(),
+                                'AppData\\Local\\Google\\Chrome SxS',
+                                'User Data\\Profile 1')
 
     chrome_Options = Options()
     chrome_Options.add_argument(f"user-data-dir={profile_path}")
@@ -71,11 +82,15 @@ def relatorio(branch, branch_code):
         "profile.default_content_settings.popups": 0,
         "download.default_directory": download_path,
         "download.prompt_for_download": False,
-        "safebrowsing.enabled": True,
-        "extensions_to_open": "inf"
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": False
     })
 
-    chrome_Options.binary_location = r'C:\Users\rafael.ferreira\AppData\Local\Google\Chrome SxS\Application\chrome.exe'
+    chrome_Options.binary_location = os.path.join('C:\\Users',
+                                                  os.getlogin(),
+                                                  'AppData\\Local\\Google\\',
+                                                  'Chrome SxS\\Application\\',
+                                                  'chrome.exe')
 
     driver = webdriver.Chrome(options=chrome_Options,
                               executable_path=driver_path)
@@ -96,7 +111,7 @@ def relatorio(branch, branch_code):
     select.select_by_value(f"015000{branch}")
     driver.find_element_by_name('cmdConfirma').click()
 
-    wait = WebDriverWait(driver, 40)
+    wait = WebDriverWait(driver, 20)
 
     # testar os popups que aparecem no login, como são variáveis
     # usaremos os blocos try except para tratar os erros
@@ -139,98 +154,53 @@ def relatorio(branch, branch_code):
     driver.execute_script("arguments[0].click();", element)
 
     # aguardar a janela abrir
-    # time.sleep(10)
     wait.until(EC.number_of_windows_to_be(2))
     driver.switch_to.window(driver.window_handles[1])
 
-    # encontrar e clicar no menu 3.16.1
-    time.sleep(10)
-    element_addr = '//*[@id="treeMenu"]/ul/li[2]/ul/li[16]/ul/li[1]/a'
+    # encontrar e clicar no menu 3.16.2
+    element_addr = '//*[@id="treeMenu"]/ul/li[2]/ul/li[16]/ul/li[2]/a'
     wait.until(EC.invisibility_of_element_located((By.XPATH, element_addr)))
     element = driver.find_element_by_xpath(element_addr)
     driver.execute_script("arguments[0].click();", element)
+    time.sleep(2)
 
-    # clicar na lista no nome do GV
-    element_addr = '//*[@id="listaEquipeVendas"]/ul/li[1]/a/ins[1]'
+    # clicar no dropdown gerente de vendas
+    element_addr = 'tpGv'
+    wait.until(EC.element_to_be_clickable((By.NAME, element_addr)))
+    select = Select(driver.find_element_by_name(element_addr))
+    select.select_by_index(1)
+    time.sleep(2)
+
+    # clicar no dropdown gerente de vendas
+    element_addr = 'tpArea'
+    wait.until(EC.element_to_be_clickable((By.NAME, element_addr)))
+    select = Select(driver.find_element_by_name(element_addr))
+    select.select_by_index(1)
+    time.sleep(2)
+
+    # clicar no botão exportar
+    element = driver.find_element_by_xpath('//*[@id="botGerarCSV"]')
+    driver.execute_script("arguments[0].click();", element)
+    time.sleep(2)
+
+    # clicar em gerar CSV
+    element_addr = '//*[@id="botGerarDiv"]'
     wait.until(EC.element_to_be_clickable((By.XPATH, element_addr)))
     element = driver.find_element_by_xpath(element_addr)
     driver.execute_script("arguments[0].click();", element)
 
-    # se for Campo Grande clicar no VDI
-    if branch == '1':
-        element_addr = '//*[@id="listaEquipeVendas"]/ul/li[2]/a/ins[1]'
-        element = driver.find_element_by_xpath(element_addr)
-        driver.execute_script("arguments[0].click();", element)
+    try:
+        wait.until(EC.alert_is_present())
+    except TimeoutException:
+        logging.warning('Erro de popup 1')
+    else:
+        driver.switch_to.alert.accept()
 
-    # seleciona a opção analítico
-    element_addr = "input[type='radio'][name='tpRelatorio'][value='A']"
-    element = driver.find_element_by_css_selector(element_addr)
-    driver.execute_script("arguments[0].click();", element)
-
-    # clicar no botão exportar
-    #  wait
-    element = driver.find_element_by_xpath('//*[@id="botExportar"]')
-    driver.execute_script("arguments[0].click();", element)
-
-    logging.info('Baixando Analítico da filial %s', branch_code)
-    WebDriverWait(driver, 150).until(EC.number_of_windows_to_be(3))
-
-    # monitorar o tempo de download
-    start_download = time.time()
-
-    # verifica se o download está concluído
-    loop_status = True
-    loop_file_size = True
-    while loop_status:
-        while loop_file_size:
-            time.sleep(1)
-            for file in os.listdir(download_path):
-                if file.endswith('.crdownload'):
-                    file_size = os.stat(os.path.join(download_path, file)).st_size
-                    time.sleep(1)
-                    file_size_after = os.stat(os.path.join(download_path, file)).st_size
-                    if file_size_after == file_size:
-                        logging.info('Analitico File Size %2f', file_size)
-                        driver.switch_to.window(driver.window_handles[2])
-                        logging.info('Analitico Windows Handles')
-                        time.sleep(1)
-                        pyautogui.press('tab')
-                        pyautogui.press('tab')
-                        pyautogui.press('enter')
-                        loop_file_size = False
-        for file in os.listdir(download_path):
-            if file.endswith('.inf'):
-                arquivo = os.listdir(download_path)
-                old_file = os.path.join(download_path, arquivo[0])
-                new_file = os.path.join(final_data_path,
-                                        f"3.16.1_{branch_code} Analítico.csv")
-                os.rename(old_file, new_file)
-                download_time = time.time() - start_download
-                loop_status = False
-
-    logging.info('Tempo de Download da Analítico da filial %2f', download_time)
-
-    # fecha a janela do download e volta para o Novo SIV
-    # WebDriverWait(driver, 50).until(EC.number_of_windows_to_be(3))
-    logging.info(driver.window_handles)
-    driver.switch_to.window(driver.window_handles[2])
-    driver.close()
-
-    # volta para a pagina do novo siv
-    driver.switch_to.window(driver.window_handles[1])
-
-    # seleciona a opção sintético
-    element_addr = "input[type='radio'][name='tpRelatorio'][value='S']"
-    element = driver.find_element_by_css_selector(element_addr)
-    driver.execute_script("arguments[0].click();", element)
-
-    # clica no botão exportar
-    element = driver.find_element_by_xpath('//*[@id="botExportar"]')
-    driver.execute_script("arguments[0].click();", element)
-
-    # procedimento de download igual o anterior
-    logging.info('Baixando Sintético da filial %s', branch_code)
-    WebDriverWait(driver, 150).until(EC.number_of_windows_to_be(3))
+    # aguardar o download do arquivo, mudar o nome e salvar no
+    # final_download_path
+    # o driver do Chrome está causando um bug no download, portanto estamos
+    # buscando o arquivo incopleto na pasta de download_path
+    logging.info('Baixando Diário da filial %s', branch_code)
 
     # monitorar o tempo de download
     start_download = time.time()
@@ -242,15 +212,16 @@ def relatorio(branch, branch_code):
             time.sleep(1)
             for file in os.listdir(download_path):
                 if file.endswith('.crdownload'):
-                    file_size = os.stat(os.path.join(download_path, file)).st_size
+                    file_size = os.stat(os.path.join(download_path,
+                                                     file)).st_size
                     time.sleep(1)
-                    file_size_after = os.stat(os.path.join(download_path, file)).st_size
+                    file_size_after = os.stat(os.path.join(download_path,
+                                                           file)).st_size
                     if file_size_after == file_size:
-                        logging.info('Sintetico File Size: %2f', file_size)
+                        logging.info('Diario File Size %2f', file_size)
                         driver.switch_to.window(driver.window_handles[2])
-                        logging.info('Sintetico Windows Handles')
+                        logging.info('Diario Windows Handles')
                         time.sleep(1)
-                        pyautogui.press('tab')
                         pyautogui.press('tab')
                         pyautogui.press('enter')
                         loop_file_size = False
@@ -259,15 +230,15 @@ def relatorio(branch, branch_code):
                 arquivo = os.listdir(download_path)
                 old_file = os.path.join(download_path, arquivo[0])
                 new_file = os.path.join(final_data_path,
-                                        f"3.16.1_{branch_code} Sintetico.csv")
+                                        f"Diario_{branch_code}.csv")
                 os.rename(old_file, new_file)
                 download_time = time.time() - start_download
                 loop_status = False
 
-    logging.info('Tempo de Download da Analítico da filial %2f', download_time)
+    logging.info('Tempo de Download do Diario da filial %2f', download_time)
 
     # vai fechando progressivamente as janelas download -> novo siv -> promax
-
+    WebDriverWait(driver, 50).until(EC.number_of_windows_to_be(3))
     driver.switch_to.window(driver.window_handles[2])
     driver.close()
     driver.switch_to.window(driver.window_handles[1])
@@ -281,13 +252,7 @@ def relatorio(branch, branch_code):
 
     logging.info('Final da rotina da filial %s', branch_code)
 
-    with open(f'3-16-1 - {branch_code}.success', 'w'):
+    with open(f'3-16-2 - {branch_code}.success', 'w'):
         pass
 
     return
-
-
-relatorio("1", "132000")
-relatorio("2", "61913")
-relatorio("4", "85789")
-relatorio("3", "63785")
