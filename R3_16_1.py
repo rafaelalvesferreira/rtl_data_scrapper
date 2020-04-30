@@ -293,13 +293,12 @@ def Relatorio3_16_1(branch, branch_code, login, password):
     driver.switch_to.window(driver.window_handles[0])
     driver.close()
 
-    for raiz, diretorios, _ in os.walk(final_data_path):
-        for diretorio in diretorios:
-            os.rmdir(os.path.join(raiz, diretorio))
+    os.rmdir(download_path)
 
     logging.info('Final da rotina da filial %s', branch_code)
 
-    with open(f'3-16-1 - {branch_code}.success', 'w'):
+    with open(os.path.join(final_data_path,
+                           f'3_16_1-{branch_code}.success'), 'w'):
         pass
 
     return
