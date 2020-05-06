@@ -243,6 +243,7 @@ def Relatorio5_7_1(branch, branch_code, login, password):
         with open(os.path.join(final_data_path,
                                f'5-7-1-{branch_code}.fail'), 'w'):
             pass
+        os.rmdir(download_path)
         Relatorio5_7_1(branch, branch_code, login, password)
 
     os.rmdir(download_path)

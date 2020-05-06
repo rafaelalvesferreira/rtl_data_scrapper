@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s; %(levelname)s; %(message)s')
 
 
-@func_set_timeout(300)
+@func_set_timeout(360)
 def Relatorio3_16_2(branch, branch_code, login, password):
     """
     Função que automatiza a geração dos dados do relatório 3.16.2
@@ -261,6 +261,7 @@ def Relatorio3_16_2(branch, branch_code, login, password):
         with open(os.path.join(final_data_path,
                                f'3_16_2-{branch_code}.fail'), 'w'):
             pass
+        os.rmdir(download_path)
         Relatorio3_16_2(branch, branch_code, login, password)
 
     os.rmdir(download_path)
