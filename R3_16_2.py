@@ -8,19 +8,22 @@ import datetime
 import os
 import random
 import logging
+import shutil
 import pyautogui
 from func_timeout import func_set_timeout
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 
-logging.basicConfig(level=logging.INFO,
-                    filename='3-16-2.log',
-                    format='%(asctime)s; %(levelname)s; %(message)s')
+# logging.basicConfig(level=logging.INFO,
+#                     filename='3-16-2.log',
+#                     format='%(asctime)s; %(levelname)s; %(message)s')
 
 
 @func_set_timeout(360)
@@ -38,13 +41,9 @@ def Relatorio3_16_2(branch, branch_code, login, password):
     # Constantes utilizada
     logging.info('3-16-2-Inicio da rotina da filial %s', branch_code)
     random.seed()
+    count = 1
 
     driver_path = 'chromedriver.exe'
-
-    # profile_path = os.path.join('C:\\Users',
-    #                             os.getlogin(),
-    #                             'AppData\\Local\\Google\\Chrome SxS',
-    #                             'User Data\\Profile 1')
 
     day = str(datetime.datetime.now().date())
 
@@ -52,50 +51,47 @@ def Relatorio3_16_2(branch, branch_code, login, password):
                                    os.getlogin(),
                                    'Downloads',
                                    day)
-
-    # criar uma pasta para o download com nome aleatório
-    random_folder = str(random.randint(0, 1000))
-    download_path = os.path.join(final_data_path, random_folder)
-    os.makedirs(download_path)
-
-    logging.info(download_path)
-
-    driver_path = 'chromedriver.exe'
-
-    # profile_path = os.path.join('C:\\Users',
-    #                             os.getlogin(),
-    #                             'AppData\\Local\\Google\\Chrome SxS',
-    #                             'User Data\\Profile 1')
-
-    chrome_Options = Options()
-    # chrome_Options.add_argument(f"user-data-dir={profile_path}")
-    chrome_Options.add_argument("--start-maximized")
-    chrome_Options.add_argument("--disable-popup-blocking")
-    chrome_Options.add_argument("--safebrowsing-disable-download-protection")
-    chrome_Options.add_argument('--disable-extensions')
-    chrome_Options.add_argument('--safebrowsing-disable-extension-blacklist')
-    chrome_Options.add_argument('--log-level=3')
-    chrome_Options.add_argument('--disable-extensions')
-    chrome_Options.add_argument('test-type')
-    chrome_Options.add_experimental_option('excludeSwitches',
-                                           ['enable-logging'])
-    chrome_Options.add_experimental_option("prefs", {
-        "profile.default_content_settings.popups": 0,
-        "download.default_directory": download_path,
-        "download.prompt_for_download": False,
-        "download.directory_upgrade": True,
-        "safebrowsing.enabled": False
-    })
-
-    chrome_Options.binary_location = os.path.join('C:\\Users',
-                                                  os.getlogin(),
-                                                  'AppData\\Local\\Google\\',
-                                                  'Chrome SxS\\Application\\',
-                                                  'chrome.exe')
-
-    driver = webdriver.Chrome(options=chrome_Options,
-                              executable_path=driver_path)
     try:
+        # criar uma pasta para o download com nome aleatório
+        random_folder = str(random.randint(0, 1000))
+        download_path = os.path.join(final_data_path, random_folder)
+        os.makedirs(download_path)
+
+        logging.info('3-16-2- Download path %s', download_path)
+
+        driver_path = 'chromedriver.exe'
+
+        chrome_Options = Options()
+        chrome_Options.add_argument("--start-maximized")
+        chrome_Options.add_argument("--disable-popup-blocking")
+        chrome_Options.add_argument(
+            "--safebrowsing-disable-download-protection")
+        chrome_Options.add_argument('--disable-extensions')
+        chrome_Options.add_argument(
+            '--safebrowsing-disable-extension-blacklist')
+        chrome_Options.add_argument('--log-level=3')
+        chrome_Options.add_argument('--disable-extensions')
+        chrome_Options.add_argument('test-type')
+        chrome_Options.add_experimental_option('excludeSwitches',
+                                               ['enable-logging'])
+        chrome_Options.add_experimental_option("prefs", {
+            "profile.default_content_settings.popups": 0,
+            "download.default_directory": download_path,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": False
+        })
+
+        chrome_Options.binary_location = os.path.join(
+            'C:\\Users',
+            os.getlogin(),
+            'AppData\\Local\\Google\\',
+            'Chrome SxS\\Application\\',
+            'chrome.exe')
+
+        driver = webdriver.Chrome(options=chrome_Options,
+                                  executable_path=driver_path)
+
         driver.get('http://rotele.promaxcloud.com.br/pw/')
 
         # mudar para o frame 'top'
@@ -228,6 +224,8 @@ def Relatorio3_16_2(branch, branch_code, login, password):
                             time.sleep(1)
                             pyautogui.press('tab')
                             pyautogui.press('enter')
+                            pyautogui.press('tab')
+                            pyautogui.press('enter')
                             loop_file_size = False
             for file in os.listdir(download_path):
                 if file.endswith('.inf'):
@@ -252,24 +250,28 @@ def Relatorio3_16_2(branch, branch_code, login, password):
         driver.switch_to.window(driver.window_handles[0])
         driver.close()
 
+    except (TimeoutException,
+            NoSuchElementException,
+            StaleElementReferenceException,
+            WebDriverException) as error:
+        logging.warning('3-16-2-%s', error)
         with open(os.path.join(final_data_path,
-                               f'3_16_2-{branch_code}.success'), 'w'):
+                               f'3_16_2-{branch_code}-{count}.fail'), 'w'):
             pass
-
-    except Exception as error:
-        logging.warning(error)
-        with open(os.path.join(final_data_path,
-                               f'3_16_2-{branch_code}.fail'), 'w'):
-            pass
-        os.rmdir(download_path)
+        count = count + 1
+        logging.warning('3-16-2- Removendo a pasta no except %s',
+                        download_path)
+        shutil.rmtree(download_path, ignore_errors=True)
+        logging.warning('3-16-2-Reiniciando a rotina')
         Relatorio3_16_2(branch, branch_code, login, password)
 
-    os.rmdir(download_path)
+    logging.warning('3-16-2- Removendo a pasta %s', download_path)
+    shutil.rmtree(download_path, ignore_errors=True)
 
     logging.info('3-16-2-Final da rotina da filial %s', branch_code)
 
-    # with open(os.path.join(final_data_path,
-    #                        f'3_16_2-{branch_code}.success'), 'w'):
-    #     pass
+    with open(os.path.join(final_data_path,
+                           f'3_16_2-{branch_code}.success'), 'w'):
+        pass
 
     return

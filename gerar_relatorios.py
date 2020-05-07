@@ -5,6 +5,7 @@ from R3_16_1 import Relatorio3_16_1
 from R3_16_2 import Relatorio3_16_2
 from R_5_7_1 import Relatorio5_7_1
 from R_5_7_1_GPS import Relatorio5_7_1_GPS
+from R_5_12_2 import Relatorio5_12_2
 
 day = str(datetime.datetime.now().date())
 
@@ -93,5 +94,25 @@ except FunctionTimedOut:
 
 try:
     Relatorio5_7_1_GPS("3", "63785", lg, pwd)
+except FunctionTimedOut:
+    pass
+
+try:
+    Relatorio5_12_2("1", "132000", lg, pwd)
+except FunctionTimedOut:
+    pass
+
+try:
+    Relatorio5_12_2("2", "61913", lg, pwd)
+except FunctionTimedOut:
+    pass
+
+try:
+    Relatorio5_12_2("4", "85789", lg, pwd)
+except FunctionTimedOut:
+    pass
+
+try:
+    Relatorio5_12_2("3", "63785", lg, pwd)
 except FunctionTimedOut:
     pass
