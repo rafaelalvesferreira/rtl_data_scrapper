@@ -13,6 +13,7 @@ import random
 import logging
 import shutil
 import pyautogui
+import pygetwindow as pw
 from func_timeout import func_set_timeout
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -211,6 +212,12 @@ def Relatorio3_16_1(branch, branch_code, login, password):
                             driver.switch_to.window(driver.window_handles[2])
                             logging.info('3-16-1-Analitico Windows Handles')
                             time.sleep(1)
+                            window = pw.getWindowsWithTitle('Sem Título')[0]
+                            window.activate()
+                            pyautogui.press('tab')
+                            pyautogui.press('enter')
+                            pyautogui.press('tab')
+                            pyautogui.press('enter')
                             pyautogui.press('tab')
                             pyautogui.press('enter')
                             loop_file_size = False
@@ -270,9 +277,9 @@ def Relatorio3_16_1(branch, branch_code, login, password):
                                          file_size)
                             driver.switch_to.window(driver.window_handles[2])
                             logging.info('3-16-1-Sintetico Windows Handles')
+                            window = pw.getWindowsWithTitle('Sem Título')[0]
+                            window.activate()
                             time.sleep(1)
-                            pyautogui.press('tab')
-                            pyautogui.press('enter')
                             pyautogui.press('tab')
                             pyautogui.press('enter')
                             loop_file_size = False

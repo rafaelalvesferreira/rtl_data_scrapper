@@ -29,7 +29,7 @@ def Selecionar_Dropdowns(ic,
                          branch_code):
 
     wait = WebDriverWait(driver, 20)
-    branchs = {'132000': 'CG', '61913': 'AQ', '85789': 'CX', '63785': 'CB'}
+    branchs = {'132000': 'CG', '61913': 'AQ', '85789': 'CB', '63785': 'CX'}
 
     # ajustar a data
     element_addr = '//*[@id="dtVisita"]'
@@ -276,11 +276,3 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
         pass
 
     return
-
-
-# lg = 'RAFAELFERRE'
-# pwd = 'Rafa001*el'
-# Relatorio5_7_1_GPS("1", "132000", lg, pwd)
-# # Relatorio5_7_1_GPS("2", "61913", lg, pwd)
-# # Relatorio5_7_1_GPS("4", "85789", lg, pwd)
-# # Relatorio5_7_1_GPS("3", "63785", lg, pwd)

@@ -36,7 +36,7 @@ def Relatorio5_12_2(branch, branch_code, login, password):
     logging.info('20-5-12-2-Inicio da rotina da filial %s', branch_code)
     random.seed()
 
-    branchs = {'132000': 'CG', '61913': 'AQ', '85789': 'CX', '63785': 'CB'}
+    branchs = {'132000': 'CG', '61913': 'AQ', '85789': 'CB', '63785': 'CX'}
 
     driver_path = 'chromedriver.exe'
 
@@ -80,11 +80,11 @@ def Relatorio5_12_2(branch, branch_code, login, password):
         })
 
         chrome_Options.binary_location = os.path.join(
-                                        'C:\\Users',
-                                        os.getlogin(),
-                                        'AppData\\Local\\Google\\',
-                                        'Chrome SxS\\Application\\',
-                                        'chrome.exe')
+            'C:\\Users',
+            os.getlogin(),
+            'AppData\\Local\\Google\\',
+            'Chrome SxS\\Application\\',
+            'chrome.exe')
 
         driver = webdriver.Chrome(options=chrome_Options,
                                   executable_path=driver_path)
@@ -169,9 +169,12 @@ def Relatorio5_12_2(branch, branch_code, login, password):
         # clicar na data inicial
         element_addr = '//*[@id="dtInicio"]'
         wait.until(EC.element_to_be_clickable((By.XPATH, element_addr)))
+        time.sleep(2)
+        element = driver.find_element_by_xpath(element_addr).click()
         print(first_day)
         element = driver.find_element_by_xpath(element_addr).send_keys(
-                                                                    first_day)
+            first_day)
+
         # clicar no botão exportar
         element = driver.find_element_by_xpath('//*[@id="botExportar"]')
         driver.execute_script("arguments[0].click();", element)
@@ -217,11 +220,3 @@ def Relatorio5_12_2(branch, branch_code, login, password):
         pass
 
     return
-
-
-lg = 'RAFAELFERRE'
-pwd = 'Rafa001*el'
-Relatorio5_12_2("1", "132000", lg, pwd)
-Relatorio5_12_2("2", "61913", lg, pwd)
-Relatorio5_12_2("4", "85789", lg, pwd)
-Relatorio5_12_2("3", "63785", lg, pwd)

@@ -10,6 +10,7 @@ import random
 import logging
 import shutil
 import pyautogui
+import pygetwindow as pw
 from func_timeout import func_set_timeout
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -222,6 +223,10 @@ def Relatorio3_16_2(branch, branch_code, login, password):
                             driver.switch_to.window(driver.window_handles[2])
                             logging.info('3-16-2-Diario Windows Handles')
                             time.sleep(1)
+                            window = pw.getWindowsWithTitle('Sem Título')[0]
+                            window.activate()
+                            pyautogui.press('tab')
+                            pyautogui.press('enter')
                             pyautogui.press('tab')
                             pyautogui.press('enter')
                             pyautogui.press('tab')
