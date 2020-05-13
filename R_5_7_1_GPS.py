@@ -87,9 +87,11 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
 
     day = str(datetime.datetime.now().date())
 
-    lastday = (datetime.date.today() -
-               datetime.timedelta(
-                   days=1)).strftime('%d/%m/%Y').replace('/', '')
+    lastday = (datetime.date.today() - datetime.timedelta(days=1))
+    if lastday.strftime('%a') == 'Sun':
+        lastday = (datetime.date.today() - datetime.timedelta(days=2))
+
+    lastday = lastday.strftime('%d/%m/%Y').replace('/', '')
 
     today = datetime.date.today().strftime('%d/%m/%Y').replace('/', '')
 
@@ -260,6 +262,9 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
                                f'5-7-1-GPS-{branch_code}.fail'), 'w'):
             pass
         shutil.rmtree(download_path, ignore_errors=True)
+        for window in driver.window_handles:
+            driver.switch_to.window(window)
+            driver.close()
         Relatorio5_7_1_GPS(branch, branch_code, login, password)
 
     for root, dirs, files in os.walk(download_path):

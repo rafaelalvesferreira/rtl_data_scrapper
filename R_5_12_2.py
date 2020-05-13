@@ -43,6 +43,12 @@ def Relatorio5_12_2(branch, branch_code, login, password):
     day = str(datetime.datetime.now().date())
     first_day = datetime.date.today().strftime('01/%m/%Y').replace('/', '')
 
+    lastday = (datetime.date.today() - datetime.timedelta(days=1))
+    if lastday.strftime('%a') == 'Sun':
+        lastday = (datetime.date.today() - datetime.timedelta(days=2))
+
+    lastday = lastday.strftime('%d/%m/%Y').replace('/', '')
+
     final_data_path = os.path.join('C:\\Users',
                                    os.getlogin(),
                                    'Downloads',
@@ -166,14 +172,28 @@ def Relatorio5_12_2(branch, branch_code, login, password):
         element = driver.find_element_by_xpath(element_addr)
         driver.execute_script("arguments[0].click();", element)
 
-        # clicar na data inicial
-        element_addr = '//*[@id="dtInicio"]'
+        # clicar na data final
+        element_addr = '//*[@id="dtFim"]'
         wait.until(EC.element_to_be_clickable((By.XPATH, element_addr)))
         time.sleep(2)
         element = driver.find_element_by_xpath(element_addr).click()
-        print(first_day)
+        time.sleep(1)
+        #print(f'Ultimo dia: {lastday}')
+        element = driver.find_element_by_xpath(element_addr).send_keys(
+            lastday)
+        driver.find_element_by_xpath(
+            '//*[@id="formPH070111"]/div[1]/div[3]/div[1]').click()
+        time.sleep(1)
+
+        # clicar na data inicial
+        element_addr = '//*[@id="dtInicio"]'
+        wait.until(EC.element_to_be_clickable((By.XPATH, element_addr)))
+        #element = driver.find_element_by_xpath(element_addr).click()
+        #print(f'Primeiro dia: {first_day}')
         element = driver.find_element_by_xpath(element_addr).send_keys(
             first_day)
+
+        time.sleep(1)
 
         # clicar no botão exportar
         element = driver.find_element_by_xpath('//*[@id="botExportar"]')
@@ -209,6 +229,9 @@ def Relatorio5_12_2(branch, branch_code, login, password):
                                f'20-5-12-2-{branch_code}.fail'), 'w'):
             pass
         shutil.rmtree(download_path, ignore_errors=True)
+        for window in driver.window_handles:
+            driver.switch_to.window(window)
+            driver.close()
         Relatorio5_12_2(branch, branch_code, login, password)
 
     shutil.rmtree(download_path, ignore_errors=True)
@@ -220,3 +243,7 @@ def Relatorio5_12_2(branch, branch_code, login, password):
         pass
 
     return
+
+# lg = 'RAFAELFERRE'
+# pwd = 'Rafa001*el'
+# Relatorio5_12_2("2", "61913", lg, pwd)

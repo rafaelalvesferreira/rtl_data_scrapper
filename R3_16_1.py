@@ -12,7 +12,7 @@ import os
 import random
 import logging
 import shutil
-import pyautogui
+import pyautogui as auto
 import pygetwindow as pw
 from func_timeout import func_set_timeout
 from selenium import webdriver
@@ -28,6 +28,9 @@ from selenium.webdriver.support.ui import Select
 logging.basicConfig(level=logging.INFO,
                     filename='reports.log',
                     format='%(asctime)s; %(levelname)s; %(message)s')
+
+auto.PAUSE = 2
+auto.FAILSAFE = False
 
 
 @func_set_timeout(300)
@@ -214,12 +217,12 @@ def Relatorio3_16_1(branch, branch_code, login, password):
                             time.sleep(1)
                             window = pw.getWindowsWithTitle('Sem Título')[0]
                             window.activate()
-                            pyautogui.press('tab')
-                            pyautogui.press('enter')
-                            pyautogui.press('tab')
-                            pyautogui.press('enter')
-                            pyautogui.press('tab')
-                            pyautogui.press('enter')
+                            btn_manter = auto.locateCenterOnScreen('btn.png')
+                            logging.info('Posicao do botao %s', btn_manter)
+                            if btn_manter is None:
+                                auto.click(x=418, y=575)
+                            else:
+                                auto.click(btn_manter)
                             loop_file_size = False
             for file in os.listdir(download_path):
                 if file.endswith('.inf'):
@@ -280,8 +283,12 @@ def Relatorio3_16_1(branch, branch_code, login, password):
                             window = pw.getWindowsWithTitle('Sem Título')[0]
                             window.activate()
                             time.sleep(1)
-                            pyautogui.press('tab')
-                            pyautogui.press('enter')
+                            btn_manter = auto.locateCenterOnScreen('btn.png')
+                            logging.info('Posicao do botao %s', btn_manter)
+                            if btn_manter is None:
+                                auto.click(x=418, y=575)
+                            else:
+                                auto.click(btn_manter)
                             loop_file_size = False
             for file in os.listdir(download_path):
                 if file.endswith('.inf'):
@@ -319,6 +326,9 @@ def Relatorio3_16_1(branch, branch_code, login, password):
         logging.warning('3-16-1- Removendo a pasta no except %s',
                         download_path)
         shutil.rmtree(download_path, ignore_errors=True)
+        for window in driver.window_handles:
+            driver.switch_to.window(window)
+            driver.close()
         Relatorio3_16_1(branch, branch_code, login, password)
 
     logging.warning('3-16-1- Removendo a pasta %s', download_path)

@@ -244,6 +244,9 @@ def Relatorio5_7_1(branch, branch_code, login, password):
         logging.warning('5-7-1- Removendo a pasta no except %s',
                         download_path)
         shutil.rmtree(download_path, ignore_errors=True)
+        for window in driver.window_handles:
+            driver.switch_to.window(window)
+            driver.close()
         Relatorio5_7_1(branch, branch_code, login, password)
 
     logging.warning('5-7-1- Removendo a pasta %s', download_path)
