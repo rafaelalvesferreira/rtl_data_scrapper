@@ -45,7 +45,6 @@ def Relatorio3_16_2(branch, branch_code, login, password):
     # Constantes utilizada
     logging.info('3-16-2-Inicio da rotina da filial %s', branch_code)
     random.seed()
-    count = 1
 
     driver_path = 'chromedriver.exe'
 
@@ -62,8 +61,6 @@ def Relatorio3_16_2(branch, branch_code, login, password):
         os.makedirs(download_path)
 
         logging.info('3-16-2- Download path %s', download_path)
-
-        driver_path = 'chromedriver.exe'
 
         chrome_Options = Options()
         chrome_Options.add_argument("--start-maximized")
@@ -85,13 +82,6 @@ def Relatorio3_16_2(branch, branch_code, login, password):
             "download.directory_upgrade": True,
             "safebrowsing.enabled": False
         })
-
-        chrome_Options.binary_location = os.path.join(
-            'C:\\Users',
-            os.getlogin(),
-            'AppData\\Local\\Google\\',
-            'Chrome SxS\\Application\\',
-            'chrome.exe')
 
         driver = webdriver.Chrome(options=chrome_Options,
                                   executable_path=driver_path)
@@ -227,12 +217,12 @@ def Relatorio3_16_2(branch, branch_code, login, password):
                             logging.info('3-16-2-Diario Windows Handles')
                             time.sleep(1)
                             window = pw.getWindowsWithTitle('Sem Título')[0]
-                            window.activate()
-                            time.sleep(1)
+                            window.maximize()
+                            auto.moveTo(x=0, y=0)
                             btn_manter = auto.locateCenterOnScreen('btn.png')
                             logging.info('Posicao do botao %s', btn_manter)
                             if btn_manter is None:
-                                auto.click(x=418, y=575)
+                                auto.click(x=410, y=704)
                             else:
                                 auto.click(btn_manter)
                             loop_file_size = False
@@ -265,9 +255,8 @@ def Relatorio3_16_2(branch, branch_code, login, password):
             WebDriverException) as error:
         logging.warning('3-16-2-%s', error)
         with open(os.path.join(final_data_path,
-                               f'3_16_2-{branch_code}-{count}.fail'), 'w'):
+                               f'3_16_2-{branch_code}.fail'), 'w'):
             pass
-        count = count + 1
         logging.warning('3-16-2- Removendo a pasta no except %s',
                         download_path)
         shutil.rmtree(download_path, ignore_errors=True)

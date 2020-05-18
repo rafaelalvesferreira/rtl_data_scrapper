@@ -35,7 +35,6 @@ def Relatorio5_7_1(branch, branch_code, login, password):
     # Constantes utilizada
     logging.info('5-7-1-Inicio da rotina da filial %s', branch_code)
     random.seed()
-    count = 0
 
     driver_path = 'chromedriver.exe'
 
@@ -73,13 +72,6 @@ def Relatorio5_7_1(branch, branch_code, login, password):
             "safebrowsing.enabled": True,
             "extensions_to_open": "inf"
         })
-
-        chrome_Options.binary_location = os.path.join(
-            'C:\\Users',
-            os.getlogin(),
-            'AppData\\Local\\Google\\',
-            'Chrome SxS\\Application\\',
-            'chrome.exe')
 
         driver = webdriver.Chrome(options=chrome_Options,
                                   executable_path=driver_path)
@@ -148,6 +140,7 @@ def Relatorio5_7_1(branch, branch_code, login, password):
         driver.switch_to.window(driver.window_handles[1])
 
         # encontrar e clicar no menu 3.7.1
+        time.sleep(1)
         element_addr = '//*[@id="treeMenu"]/ul/li[4]/ul/li[7]/ul/li[1]/a'
         wait.until(EC.invisibility_of_element_located((By.XPATH,
                                                        element_addr)))
@@ -238,9 +231,8 @@ def Relatorio5_7_1(branch, branch_code, login, password):
             WebDriverException) as error:
         logging.warning('5-7-1-%s', error)
         with open(os.path.join(final_data_path,
-                               f'5-7-1-{branch_code}-{count}.fail'), 'w'):
+                               f'5-7-1-{branch_code}.fail'), 'w'):
             pass
-        count += 1
         logging.warning('5-7-1- Removendo a pasta no except %s',
                         download_path)
         shutil.rmtree(download_path, ignore_errors=True)

@@ -131,13 +131,6 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
             "extensions_to_open": "inf"
         })
 
-        chrome_Options.binary_location = os.path.join(
-            'C:\\Users',
-            os.getlogin(),
-            'AppData\\Local\\Google\\',
-            'Chrome SxS\\Application\\',
-            'chrome.exe')
-
         driver = webdriver.Chrome(options=chrome_Options,
                                   executable_path=driver_path)
 
