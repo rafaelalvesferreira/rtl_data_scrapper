@@ -1,6 +1,7 @@
 import os
 import datetime
 from func_timeout import FunctionTimedOut
+import pyautogui
 from R3_16_1 import Relatorio3_16_1
 from R3_16_2 import Relatorio3_16_2
 from R_5_7_1 import Relatorio5_7_1
@@ -14,12 +15,18 @@ final_data_path = os.path.join('C:\\Users',
                                'Downloads',
                                day)
 
-with open('Usuario_Senha.txt', 'r') as f:
-    for linha in f:
-        if linha.split()[0] == 'Usuario:':
-            lg = linha.split()[1]
-        if linha.split()[0] == 'Senha:':
-            pwd = linha.split()[1]
+try:
+    with open('Usuario_Senha.txt', 'r') as f:
+        for linha in f:
+            if linha.split()[0] == 'Usuario:':
+                lg = linha.split()[1]
+            if linha.split()[0] == 'Senha:':
+                pwd = linha.split()[1]
+except IndexError:
+    pyautogui.alert(text='''Verifique o formato do arquivo "Usuario_Senha.txt!"
+                            Siga a orientação incuída no arquivo!''',
+                    title='Baixar Relatorios do Promax',
+                    button='OK')
 
 try:
     Relatorio3_16_1("1", "132000", lg, pwd)
