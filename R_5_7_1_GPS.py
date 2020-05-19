@@ -212,7 +212,7 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
         driver.execute_script("arguments[0].click();", element)
 
         logging.info('5-7-1-GPS-IC_GPS - dia %s', today)
-        Selecionar_Dropdowns(7, 9, 'IC_GPS', today, driver, download_path,
+        Selecionar_Dropdowns(7, 8, 'IC_GPS', today, driver, download_path,
                              branch_code)
 
         driver.switch_to.window(driver.window_handles[2])
@@ -220,7 +220,7 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
         driver.switch_to.window(driver.window_handles[1])
 
         logging.info('5-7-1-GPS-D-1-IC_GPS - dia %s', lastday)
-        Selecionar_Dropdowns(7, 10, 'D-1_IC_GPS', lastday, driver,
+        Selecionar_Dropdowns(7, 9, 'D-1_IC_GPS', lastday, driver,
                              download_path, branch_code)
 
         driver.switch_to.window(driver.window_handles[2])
