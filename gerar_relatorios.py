@@ -14,8 +14,12 @@ final_data_path = os.path.join('C:\\Users',
                                'Downloads',
                                day)
 
-lg = 'RAFAELFERRE'
-pwd = 'Rafa001*el'
+with open('Usuario_Senha.txt', 'r') as f:
+    for linha in f:
+        if linha.split()[0] == 'Usuario:':
+            lg = linha.split()[1]
+        if linha.split()[0] == 'Senha:':
+            pwd = linha.split()[1]
 
 try:
     Relatorio3_16_1("1", "132000", lg, pwd)
