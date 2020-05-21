@@ -198,6 +198,7 @@ def Relatorio5_7_1_GPS(branch, branch_code, login, password):
         driver.switch_to.window(driver.window_handles[1])
 
         # encontrar e clicar no menu 5.7.1
+        time.sleep(3)
         element_addr = '//*[@id="treeMenu"]/ul/li[4]/ul/li[7]/ul/li[1]/a'
         wait.until(EC.invisibility_of_element_located((By.XPATH,
                                                        element_addr)))

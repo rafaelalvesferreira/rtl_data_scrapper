@@ -153,7 +153,7 @@ def Relatorio3_16_1(branch, branch_code, login, password):
         driver.switch_to.window(driver.window_handles[1])
 
         # encontrar e clicar no menu 3.16.1
-        time.sleep(10)
+        time.sleep(3)
         element_addr = '//*[@id="treeMenu"]/ul/li[2]/ul/li[16]/ul/li[1]/a'
         wait.until(EC.invisibility_of_element_located((By.XPATH,
                                                        element_addr)))
@@ -161,6 +161,7 @@ def Relatorio3_16_1(branch, branch_code, login, password):
         driver.execute_script("arguments[0].click();", element)
 
         # clicar na lista no nome do GV
+        time.sleep(2)
         element_addr = '//*[@id="listaEquipeVendas"]/ul/li[1]/a/ins[1]'
         wait.until(EC.element_to_be_clickable((By.XPATH, element_addr)))
         element = driver.find_element_by_xpath(element_addr)
